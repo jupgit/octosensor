@@ -1,0 +1,7 @@
+DAY 1
+09 january 2021
+
+- Solve ESP32 / Big Sur OS conflict
+- Assemble prototypes for S01(Sensor 01) and C00 (Central 00)
+- Test two way communication using ESP NOW (wireless comm protocol) between S01 and C00
+
