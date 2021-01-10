@@ -1,7 +1,18 @@
 DAY 1
 09 january 2021
 
-- Solve ESP32 / Big Sur OS conflict
+- Solve ESP32 / Big Sur OS conflict: NOT solved yet, lots of ESP and Python updates later. Momentary solution: use parallels and Windows Arduino IDE.
+
+DAY 2
+
+- Test of the (Wemos Lolin32) "Esp32 Oled - Esp32 + Wifi + Bluetooth Dual Core Esp". It has an integrated OLED display, so it's less soldering also. I hope this will not conflict with the laser sensor as it was in the early tests. 
+
+ESP32 Built-in OLED Board (Wemos Lolin32): Pinout, Libraries and OLED Control
+https://randomnerdtutorials.com/esp32-built-in-oled-ssd1306/
+
+
+
+
 - Assemble prototypes for S01(Sensor 01) and C00 (Central 00)
 - Test two way communication using ESP NOW (wireless comm protocol) between S01 and C00
 
