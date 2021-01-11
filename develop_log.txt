@@ -11,8 +11,8 @@ DAY 2
 "Esp32 Oled - Esp32 + Wifi + Bluetooth Dual Core Esp". 
 It has an integrated OLED display, so it's less soldering and connections in the project. I hope this will not conflict with the laser sensor as it was in the early tests. 
 
-ESP32 Built-in OLED Board (Wemos Lolin32): Pinout, Libraries and OLED Control
-https://randomnerdtutorials.com/esp32-built-in-oled-ssd1306/
+>>>>> WeMos Lolin 32 HAD THE SAME DELAY PROBLEM READING TFMINI SENSOR. SO BACK TO USING ESP + OLED + ARDUINO NANO (only for TFMini readings)
+
 
 
 
