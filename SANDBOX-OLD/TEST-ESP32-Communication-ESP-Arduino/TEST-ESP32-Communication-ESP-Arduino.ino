@@ -3,18 +3,21 @@
 
 void setup()
 {
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial1.begin(9600, SERIAL_8N1, RXD2, TXD2);
 }
 
 void loop()
 {
+
+  /*
   if(Serial.available()>0)
   {
     byte x = Serial.read();
     Serial1.write(x);
   }
-  if(Serial2.available()>0)
+  */
+  if(Serial1.available()>0)
   {
     Serial.write((char)Serial1.read());
   }
