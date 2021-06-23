@@ -17,10 +17,10 @@
 // 1 - Turn on OLED Display
 // 2 - Buzz a sound
 // 3 - Turn on 3 Monitor LEDs
-// 4 - Flash UV --- DEPRECATED
+// 4 - Flash LASER
 // 5 - Prompt for button tests
 // 6 - LED strip output
-// 7 - Sensor reading
+// 7 - Sensor reading (NOT YET)
 //
 
 
@@ -87,6 +87,10 @@ CRGB LEDstrip[NUM_STRIPS][NUM_LEDS];
 #define BUZZER_PIN 15
 
 
+// LASER POINTER
+
+int laserPoniterPin = 5;
+
 
 // BLINK CONTROL
 #include <BlinkControl.h>
@@ -101,8 +105,8 @@ boolean bot_UP = 0 ;
 boolean bot_DOWN = 0 ;
 
 int bot_ENTER_PIN = 33;
-int bot_UP_PIN = 34;
-int bot_DOWN_PIN = 35;
+int bot_UP_PIN = 32;
+int bot_DOWN_PIN = 19;
 
 
 
@@ -143,11 +147,10 @@ void setup() {
 
  
 
-// LED STRIP
+// LED STRIPs
   //LEDS.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);
   FastLED.addLeds<NEOPIXEL, 25>(LEDstrip[0], 3);  // 3 LEDS FOR MONITOR
   FastLED.addLeds<NEOPIXEL, 26>(LEDstrip[1], NUM_LEDS);
-
     
     FastLED.setBrightness(BRIGHTNESS);
 
@@ -158,15 +161,16 @@ void setup() {
   delay(500);
 
 // PUSH BUTTONS
-pinMode (bot_ENTER_PIN, INPUT);
-pinMode (bot_UP_PIN, INPUT);
-pinMode (bot_DOWN_PIN, INPUT);
+pinMode (bot_ENTER_PIN, INPUT_PULLDOWN);
+pinMode (bot_UP_PIN, INPUT_PULLDOWN);
+pinMode (bot_DOWN_PIN, INPUT_PULLDOWN);
 
 
-// UV LED Blink
-//  led_UV.begin();
-//  led_UV.blink2();
-  
+// Laser Pointer ON
+
+pinMode(laserPoniterPin, OUTPUT);
+digitalWrite(laserPoniterPin, 1);  // turns on LASER POINTER
+
 }
 
 

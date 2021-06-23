@@ -13,10 +13,7 @@
 
 
 // NODE SETUP
-const int nodeNumber = 2;   // defines the node number
-
-
-
+const int nodeNumber = 1;   // defines the node number
 
 
 
@@ -85,7 +82,23 @@ struct_message incomingReadings;
   int errorLimit = 50;     // max error count until sensor reset
   
 
-// LED STRIP
+
+// LED STRIP //////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include <FastLED.h>
+#define LED_PIN     26
+#define NUM_LEDS    150   /////// NUMERO DE LEDS DA FITA ////////////////////// 
+#define LED_TYPE    WS2812B
+#define COLOR_ORDER GRB
+#define BRIGHTNESS  128
+// We're using two LED strips, one for the monitor, the for the show
+// (see File>Examples>FASTLED>ArrayOfLedArrays)
+#define NUM_STRIPS 2
+//CRGB leds[NUM_LEDS];
+CRGB LEDstrip[NUM_STRIPS][NUM_LEDS];
+
+/*
+// LED STRIP (OLD)
 #include <FastLED.h>
 
 #define LED_PIN     25
@@ -93,16 +106,18 @@ struct_message incomingReadings;
 #define NUM_LEDS    3
 #define LED_TYPE    WS2812B
 #define COLOR_ORDER GRB
-#define BRIGHTNESS  48
+#define BRIGHTNESS  200
 
 CRGB leds[NUM_LEDS];
-
+*/
 
 // BUZZER
 #include <CuteBuzzerSounds.h>
 #define BUZZER_PIN 15
 
+// LASER POINTER
 
+int laserPoniterPin = 5;
 
 
 
@@ -145,10 +160,17 @@ void setup() {
   
   // Init Serial Monitor
   Serial.begin(115200);
+      Serial.println("Serial");
+
   
   // SENSOR
   MySerial.begin(115200);
+      Serial.println("My Serial");
+
   tfmini.begin(&MySerial);
+    Serial.println("TFMini begin");
+
+  
   delay(100);
 
   // Init OLED display
@@ -156,6 +178,12 @@ void setup() {
     Serial.println(F("SSD1306 allocation failed"));
     for(;;);
   }
+
+    Serial.println("OLED");
+
+
+  display.display();
+  delay(500); // Pause for 2 seconds
  
   // Set device as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
@@ -188,14 +216,30 @@ void setup() {
   //
   esp_now_register_recv_cb(OnDataRecv);
 
+    Serial.println("ESPNOW");
 
-// LED STRIP
-    LEDS.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);
-//  LEDS.addLeds<LED_TYPE, LED_PIN, CLOCK_PIN COLOR_ORDER>(leds, NUM_LEDS);
+
+
+// LED STRIPs
+  //LEDS.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);
+  FastLED.addLeds<NEOPIXEL, 25>(LEDstrip[0], 3);  // 3 LEDS FOR MONITOR
+  FastLED.addLeds<NEOPIXEL, 26>(LEDstrip[1], NUM_LEDS);
+    
     FastLED.setBrightness(BRIGHTNESS);
+    
 
 // buzzer
   cute.init(BUZZER_PIN);
+
+    Serial.println("Buzzer");
+
+
+// Laser Pointer ON
+
+pinMode(laserPoniterPin, OUTPUT);
+digitalWrite(laserPoniterPin, 1);  // turns on LASER POINTER
+
+    Serial.println("Laser");
 
   
 }
@@ -233,19 +277,36 @@ void loop() {
   updateDisplay();
 
 
-  int teste = map(octoValue, 30, 250, 0,255);
+  int teste = map(octoValue, 30, 400, 0,255);
   teste = constrain(teste, 0, 255);
 
   // LED INDICATOR
 
   
-  leds[1].setRGB(teste, teste/32,teste/8); // COR
-  leds[0].setRGB(teste/8, teste/64,teste/16); // COR
-  leds[2].setRGB(teste/8, teste/64,teste/16); // COR
+  LEDstrip[0][1].setRGB(teste, teste/32,teste/8); // COR
+  LEDstrip[0][0].setRGB(teste/8, teste/64,teste/16); // COR
+  LEDstrip[0][2].setRGB(teste/8, teste/64,teste/16); // COR
    FastLED.show();
 
   
-  delay(10);
+
+  // led strip
+
+
+    int ledMeter = map (teste,0, 255, 0, NUM_LEDS);
+
+    
+    LEDstrip[1][ledMeter] = CRGB::Red;
+    FastLED.show();
+    fadeToBlackBy( LEDstrip[1], NUM_LEDS, 40);
+    delay(10);
+
+
+    
+
+    //LEDstrip[1][ledMeter] = CRGB::Black;
+    //FastLED.show();
+
   
 }
 

@@ -100,15 +100,19 @@ static const unsigned char PROGMEM VUMeter[] = {
 void setup(void) {
 
   Serial.begin(115200);
-    Serial.println("Setup Finished");
+
+    Serial.println("Serial");
 
 
   MySerial.begin(115200);
+
+    Serial.println("My Serial");
 
 
   // SENSOR
   tfmini.begin(&MySerial);
   
+    Serial.println("TFMini begin");
 
   delay(100);
 
@@ -121,6 +125,9 @@ void setup(void) {
     Serial.println(F("SSD1306 allocation failed"));
     for(;;); // Don't proceed, loop forever
   }
+
+    Serial.println("OLED");
+
 
   // Show initial display buffer contents on the screen --
   // the library initializes this with an Adafruit splash screen.
@@ -136,7 +143,7 @@ void setup(void) {
   display.drawPixel(63, 31, SSD1306_WHITE);
   delay(3000);
 
-  Serial.println("Setup Finished");
+  Serial.println("SETUP END");
    
 }
 

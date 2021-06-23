@@ -165,7 +165,7 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
  
 void setup() {
   // Init Serial Monitor
-  Serial.begin(115200);
+  Serial.begin(9600);
 
 
 
@@ -269,6 +269,7 @@ void loop() {
   
    updateSensorsBarGraph();
 
+
   delay(50);
 
   //update8x8();
@@ -301,6 +302,13 @@ void updateSensorsBarGraph() {
       // PRINTS THE SENSOR VALUE
       tft.setCursor(35, 80+(s*25));
       tft.print(octoSensor[s]);
+
+
+      //ISADORA  
+      Serial.print((s+1),DEC); // discuss in later
+      Serial.print(octoSensor[s]); //Send a value to computer.
+      Serial.println(); //Send a value to eom
+      
   
       previousOctoSensor[s] = octoSensor[s];
     }
