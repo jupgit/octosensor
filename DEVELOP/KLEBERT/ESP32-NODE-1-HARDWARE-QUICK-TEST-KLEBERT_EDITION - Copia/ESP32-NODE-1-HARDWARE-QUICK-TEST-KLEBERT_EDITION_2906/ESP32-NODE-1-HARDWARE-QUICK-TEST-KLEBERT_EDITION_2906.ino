@@ -130,6 +130,7 @@ TBlendType    currentBlending;
 
 #define COOLING  55
 #define SPARKING 120
+
 // BUZZER
 #include <CuteBuzzerSounds.h>
 #define BUZZER_PIN 15
@@ -252,6 +253,9 @@ void setup() {
   cute.init(BUZZER_PIN);
 
     Serial.println("Buzzer");
+    cute.play(S_FART3);
+    delay(500);
+
 
 
 // Laser Pointer ON
@@ -322,14 +326,15 @@ void loop() {
 //////////////////////////////////////////////////////////
 // KLEBERT EDITION
 //////////////////////////////////////////////////////////
-    estado = 5;
+    estado = ledMeter;
 
 /////////
 //Relaxamento
 ////////
     int tensao = map(octoValue, 270, 360, 10, 100);
     if(estado == 3){
-        Respirando(tensao, tensao); //Respiração em Canudo e nas cores dos Xacras como proposto pelo Paulo Teles
+      //cute.play(S_CONNECTION);
+      Respirando(tensao, tensao); //Respiração em Canudo e nas cores dos Xacras como proposto pelo Paulo Teles
     }
 
 ////////
@@ -338,6 +343,7 @@ void loop() {
     //int hell = map(octoValue, 180, 270, 10, 100);
     //Demo reel como sugerido pelo Juliano
     if( estado == 2){
+    //cute.play(S_CONNECTION);
       demo(100);
     }
 
@@ -349,6 +355,7 @@ void loop() {
     int verdor = map(octoValue, 80, 180, 0, 255);
     //Strobo
     if(estado == 1){
+      //cute.play(S_CONNECTION);
       trigged(vermelhor, verdor ,0,Piscalerta); //Quando mais a pessoa se aproxima, mais rapido pisca como proposto por Juliano
     }
 
@@ -359,7 +366,8 @@ void loop() {
     //Observação: usei uma função para chamar outra função para poder mudar o tempo com facilidade e evitar bugs.
     // Fire 2012 - Sugestão do Juliano.
     if(estado == 0){
-    Carvao(pepper);
+      //cute.play(S_CONNECTION);
+      Carvao(pepper);
   }
 
 ///////    
@@ -375,6 +383,7 @@ void loop() {
 // Sobe
 //////
     if(estado == 5){
+      //cute.play(S_CONNECTION);
       Sobe(50, 50);
     }
 }
@@ -403,6 +412,8 @@ void Sobe( int inspira, int expira){
     respira += inspira;
   }
    if(r == NUM_LEDS){
+        cute.play(S_CONNECTION);
+
         leds[NUM_LEDS - 1] = CRGB::Green;
         leds[0] = CRGB::Green;
         r = 1;
@@ -440,6 +451,8 @@ void Respirando( int inspira, int expira) {
       }
     }
     if(r == NUM_LEDS){
+      //cute.play(S_JUMP);
+
       if(millis() - respira >= expira){
         leds[e] = CRGB::Black;
         //blur1d(leds, NUM_LEDS, 15);
@@ -450,6 +463,7 @@ void Respirando( int inspira, int expira) {
         }
       }
       if(r == NUM_LEDS and e == 0){
+        cute.play(S_HAPPY_SHORT);
         r = 0;
         e = NUM_LEDS - 1;
       }
@@ -460,6 +474,7 @@ void trigged(int R, int G, int B, int inspira){
   fill_solid( leds, NUM_LEDS, CRGB(R,G,B));
   if( millis() - respira >= inspira){
       FastLED.clear();
+      
       respira += inspira;
       }
 }
@@ -659,10 +674,14 @@ void juggle() {
 
 void Carvao(int queima){
   if(millis() - respira >= queima){
+
     Fogo();
     FastLED.show();
+
     respira += queima;
     }
+        cute.play(S_SURPRISE);
+
   }
 void Fogo()
 {
