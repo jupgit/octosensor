@@ -117,6 +117,7 @@ bool gReverseDirection = false;
 unsigned long int respira = 0; //Contador de Millis Universal
 int r = 0; //Acendedor de Lampadas
 int e = NUM_LEDS - 1; //Apagador de Lampadas
+int m = 0; //Autorama
 int estado = 0; //Define modo
 // Estado == 0 - Idel
 // Estado == 1 - Relaxamento
@@ -326,7 +327,7 @@ void loop() {
 //////////////////////////////////////////////////////////
 // KLEBERT EDITION
 //////////////////////////////////////////////////////////
-    estado = ledMeter;
+    estado = 5;
 
 /////////
 //Relaxamento
@@ -383,8 +384,13 @@ void loop() {
 // Sobe
 //////
     if(estado == 5){
-      //cute.play(S_CONNECTION);
-      Sobe(50, 50);
+      if( m >= 3){
+        //cute.play(S_CONNECTION);
+        Desce(25);
+      }else{
+        Sobe(50,50);
+      }
+      
     }
 }
 //////////////////////////////////////////////////////////
@@ -417,13 +423,46 @@ void Sobe( int inspira, int expira){
         leds[NUM_LEDS - 1] = CRGB::Green;
         leds[0] = CRGB::Green;
         r = 1;
+        m += 1;
+        
         
   }
 
    
    }
 
-   
+//////////////////////////////////////////////////////////////
+void Desce (int inspira){
+  uint8_t sinBeat = beatsin8(150, 0, NUM_LEDS -1, 0, 0);
+  uint8_t sinBeat2 = beatsin8(100, 0, NUM_LEDS -1, 0, 124);
+  uint8_t sinBeat3 = beatsin8(200, 0, NUM_LEDS -1, 0, 0);
+
+  if( millis() - respira >= inspira){
+    leds[NUM_LEDS - 1] = CRGB::Green;
+    leds[0] = CRGB::Green;
+    leds[e] = CRGB::Green;
+    leds[sinBeat] = CRGB::Purple;
+    leds[sinBeat2] = CRGB::Blue;
+    leds[sinBeat3] = CRGB::Yellow;
+    
+    blur1d(leds, NUM_LEDS, 15);
+    fadeToBlackBy(leds, NUM_LEDS, 200);
+   // leds[r-1] = CRGB::Black;
+    FastLED.show();
+    
+    e -= 1;
+    respira += inspira;
+  }
+   if(e == 0){
+        cute.play(S_OHOOH2);
+
+        leds[NUM_LEDS - 1] = CRGB::Red;
+        leds[0] = CRGB::Red;
+        e = NUM_LEDS - 1;
+        m = 0;
+        
+  }
+}
     
 
 /////////////////////////////////////////////////////////////
