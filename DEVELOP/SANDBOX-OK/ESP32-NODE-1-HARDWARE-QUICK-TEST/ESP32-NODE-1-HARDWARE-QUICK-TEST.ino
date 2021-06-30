@@ -44,10 +44,20 @@ TFMini tfmini;
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 
+
+
+
+
 // ************************************************************
 // REPLACE WITH THE MAC Address of your receiver 
 uint8_t broadcastAddress[] = {0xC4, 0x4F, 0x33, 0x3E, 0xE7, 0x6D};
 // ************************************************************
+
+
+
+/////////////// !!!! EXPANDIR PARA MANDAR: valor em CM, valor NORMALIZADO, RANGE
+
+
 
 // Define variables to be sent
 int octoCommand;  
@@ -253,6 +263,8 @@ digitalWrite(laserPoniterPin, 1);  // turns on LASER POINTER
 // *******************************************************
 
 void loop() {
+
+
   
   getSensorReadings();
  
