@@ -1,5 +1,5 @@
 #include <FastLED.h>
-
+//Vamos testar
 FASTLED_USING_NAMESPACE
 
 // FastLED "100-lines-of-code" demo reel, showing just a few 
