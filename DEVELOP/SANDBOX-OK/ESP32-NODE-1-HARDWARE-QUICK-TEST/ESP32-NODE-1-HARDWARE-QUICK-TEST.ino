@@ -97,7 +97,7 @@ struct_message incomingReadings;
 
 #include <FastLED.h>
 #define LED_PIN     26
-#define NUM_LEDS    150   /////// NUMERO DE LEDS DA FITA ////////////////////// 
+#define NUM_LEDS    30   /////// NUMERO DE LEDS DA FITA ////////////////////// 
 #define LED_TYPE    WS2812B
 #define COLOR_ORDER GRB
 #define BRIGHTNESS  128

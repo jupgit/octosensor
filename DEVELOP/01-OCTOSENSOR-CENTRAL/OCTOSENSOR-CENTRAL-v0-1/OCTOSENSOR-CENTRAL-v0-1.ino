@@ -169,12 +169,6 @@ void setup() {
 
 
 
-
-
-
-
-
-
 // ******************************************************* ESPNOW COMM SETUP
 
   // Set device as a Wi-Fi Station
@@ -273,11 +267,39 @@ void loop() {
 
      //ISADORA  
       Serial.print(1,DEC); // Canal 1 do Isadora
-      Serial.print(octoSensor[0]); // Envia sensor 1
+      Serial.print(octoSensor[0]); // Envia sensor 1   
       Serial.println(); //Send a value to eom
+      
       Serial.print(2,DEC); // Canal 2 do Isadora
       Serial.print(octoSensor[1]); // Envia sensor 2
       Serial.println(); //Send a value to eom
+      
+      Serial.print(3,DEC); // Canal 2 do Isadora
+      Serial.print(octoSensor[2]); // Envia sensor 2     
+      Serial.println(); //Send a value to eom
+
+      
+      Serial.print(4,DEC); // Canal 2 do Isadora
+      Serial.print(octoSensor[3]); // Envia sensor 2
+      Serial.println(); //Send a value to eom
+      
+      Serial.print(5,DEC); // Canal 2 do Isadora
+      Serial.print(octoSensor[4]); // Envia sensor 2
+      Serial.println(); //Send a value to eom
+      
+      Serial.print(6,DEC); // Canal 2 do Isadora
+      Serial.print(octoSensor[5]); // Envia sensor 2
+      Serial.println(); //Send a value to eom
+      
+      Serial.print(7,DEC); // Canal 2 do Isadora
+      Serial.print(octoSensor[6]); // Envia sensor 2
+      Serial.println(); //Send a value to eom
+      
+      Serial.print(8,DEC); // Canal 2 do Isadora
+      Serial.print(octoSensor[7]); // Envia sensor 2
+      Serial.println(); //Send a value to eom
+
+      
 
   delay(50);
 

@@ -179,7 +179,7 @@ void loop(void) {
 */
   Serial.println(dist);
   Serial.print("cm / meter = ");
-  //Serial.println(MeterValue);
+  Serial.println(MeterValue);
 
 
 

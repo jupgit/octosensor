@@ -13,7 +13,7 @@
 
 
 // NODE SETUP
-const int nodeNumber = 1;   // defines the node number
+const int nodeNumber = 6;   // defines the node number
 
 
 
@@ -87,7 +87,7 @@ struct_message incomingReadings;
 
 #include <FastLED.h>
 #define LED_PIN     26
-#define NUM_LEDS    150   /////// NUMERO DE LEDS DA FITA ////////////////////// 
+#define NUM_LEDS    30   /////// NUMERO DE LEDS DA FITA ////////////////////// 
 #define LED_TYPE    WS2812B
 #define COLOR_ORDER GRB
 #define BRIGHTNESS  128
@@ -230,8 +230,9 @@ void setup() {
 
 // buzzer
   cute.init(BUZZER_PIN);
-
-    Serial.println("Buzzer");
+  cute.play(S_FART3);
+  
+  Serial.println("Buzzer");
 
 
 // Laser Pointer ON
@@ -283,9 +284,9 @@ void loop() {
   // LED INDICATOR
 
   
-  LEDstrip[0][1].setRGB(teste, teste/32,teste/8); // COR
-  LEDstrip[0][0].setRGB(teste/8, teste/64,teste/16); // COR
-  LEDstrip[0][2].setRGB(teste/8, teste/64,teste/16); // COR
+  LEDstrip[0][1].setRGB(teste/2, 0, teste); // COR
+  LEDstrip[0][0].setRGB(teste/4, 0,teste/2); // COR
+  LEDstrip[0][2].setRGB(teste/4, 0, teste/2); // COR
    FastLED.show();
 
   
@@ -296,7 +297,7 @@ void loop() {
     int ledMeter = map (teste,0, 255, 0, NUM_LEDS);
 
     
-    LEDstrip[1][ledMeter] = CRGB::Red;
+    LEDstrip[1][ledMeter] = CRGB::Purple;
     FastLED.show();
     fadeToBlackBy( LEDstrip[1], NUM_LEDS, 40);
     delay(10);
