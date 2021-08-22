@@ -19,6 +19,25 @@ int previousOctoSensor[8] = {1023, 1023, 1023, 1023, 1023, 1023, 1023, 1023};
 
 
 
+// OSC (serial for pureData & Isadora communication)
+// https://github.com/CNMAT/OSC/
+
+
+#include <OSCMessage.h>
+#include <OSCBoards.h>
+/*
+Make an OSC message and send it over serial
+ */
+
+ #ifdef BOARD_HAS_USB_SERIAL
+#include <SLIPEncodedUSBSerial.h>
+SLIPEncodedUSBSerial SLIPSerial( thisBoardsSerialUSB );
+#else
+#include <SLIPEncodedSerial.h>
+ SLIPEncodedSerial SLIPSerial(Serial); // Change to Serial1 or Serial2 etc. for boards with multiple serial ports that don’t have Serial
+#endif
+
+
 ////
 
 //  ESPNOW
@@ -202,6 +221,11 @@ void setup() {
   esp_now_register_recv_cb(OnDataRecv);
 
 
+// OSC Serial
+  //begin SLIPSerial just like Serial
+  SLIPSerial.begin(9600);   // set this as high as you can reliably run on your platform
+
+
 //Set up the display
   tft.init();
   tft.setRotation(0);
@@ -304,29 +328,106 @@ void loop() {
 
   */
 
-     //pureData
+     //OSC > pureData
 
-      Serial.write(255);
-      Serial.write(2);
-      Serial.write(254);
 
-      delay(100);
+
+            //sensor 1
+      
+      OSCMessage msg1("/sensor/1");
+      msg1.add(octoSensor[0]);
+      
+      SLIPSerial.beginPacket();  
+      msg1.send(SLIPSerial); // send the bytes to the SLIP stream
+      SLIPSerial.endPacket(); // mark the end of the OSC Packet
+      msg1.empty(); // free space occupied by message
  
-     //Serial.write(octoSensor[0]);
-     
-     // for (int s=1; s<=8; s++) {
-     //   int pdSensor = s*1000+octoSensor[s-1]; // format 
-     //   Serial.write(pdSensor); // Envia sensor s  
-        /// IMPORTANT: Use Serial.write() instead of Serial.print() for pureData [comport] reception
-      //}
-
-  delay(250);
-
-  //update8x8();
 
 
+            //sensor 2
+      
+      OSCMessage msg2("/sensor/2");
+      msg2.add(octoSensor[1]);
+      
+      SLIPSerial.beginPacket();  
+      msg2.send(SLIPSerial); // send the bytes to the SLIP stream
+      SLIPSerial.endPacket(); // mark the end of the OSC Packet
+      msg2.empty(); // free space occupied by message
+ 
 
-  
+
+            //sensor 3
+      
+      OSCMessage msg3("/sensor/3");
+      msg3.add(octoSensor[2]);
+      
+      SLIPSerial.beginPacket();  
+      msg3.send(SLIPSerial); // send the bytes to the SLIP stream
+      SLIPSerial.endPacket(); // mark the end of the OSC Packet
+      msg3.empty(); // free space occupied by message
+ 
+
+
+            //sensor 4
+      
+      OSCMessage msg4("/sensor/4");
+      msg4.add(octoSensor[3]);
+      
+      SLIPSerial.beginPacket();  
+      msg4.send(SLIPSerial); // send the bytes to the SLIP stream
+      SLIPSerial.endPacket(); // mark the end of the OSC Packet
+      msg4.empty(); // free space occupied by message
+ 
+
+
+            //sensor 5
+      
+      OSCMessage msg5("/sensor/5");
+      msg5.add(octoSensor[4]);
+      
+      SLIPSerial.beginPacket();  
+      msg5.send(SLIPSerial); // send the bytes to the SLIP stream
+      SLIPSerial.endPacket(); // mark the end of the OSC Packet
+      msg5.empty(); // free space occupied by message
+ 
+
+
+            //sensor 6
+      
+      OSCMessage msg6("/sensor/6");
+      msg6.add(octoSensor[5]);
+      
+      SLIPSerial.beginPacket();  
+      msg6.send(SLIPSerial); // send the bytes to the SLIP stream
+      SLIPSerial.endPacket(); // mark the end of the OSC Packet
+      msg6.empty(); // free space occupied by message
+ 
+
+      
+            //sensor 7
+      
+      OSCMessage msg7("/sensor/7");
+      msg7.add(octoSensor[6]);
+      
+      SLIPSerial.beginPacket();  
+      msg7.send(SLIPSerial); // send the bytes to the SLIP stream
+      SLIPSerial.endPacket(); // mark the end of the OSC Packet
+      msg7.empty(); // free space occupied by message
+ 
+
+      
+            //sensor 8
+      
+      OSCMessage msg8("/sensor/8");
+      msg8.add(octoSensor[7]);
+      
+      SLIPSerial.beginPacket();  
+      msg8.send(SLIPSerial); // send the bytes to the SLIP stream
+      SLIPSerial.endPacket(); // mark the end of the OSC Packet
+      msg8.empty(); // free space occupied by message
+ 
+
+
 }
 
 

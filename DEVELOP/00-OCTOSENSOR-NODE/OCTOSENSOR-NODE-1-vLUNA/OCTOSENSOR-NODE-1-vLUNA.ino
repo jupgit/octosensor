@@ -15,7 +15,7 @@
 
 
 // NODE SETUP
-const int nodeNumber = 5;   // defines the node number
+const int nodeNumber = 8;   // defines the node number
 
 
 
