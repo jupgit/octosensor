@@ -15,7 +15,7 @@
 
 
 // NODE SETUP
-const int nodeNumber = 8;   // defines the node number
+const int nodeNumber = 6;   // defines the node number
 
 
 
@@ -102,7 +102,7 @@ struct_message incomingReadings;
 
 #include <FastLED.h>
 #define LED_PIN     26
-#define NUM_LEDS    30   /////// NUMERO DE LEDS DA FITA ////////////////////// 
+#define NUM_LEDS    150   /////// NUMERO DE LEDS DA FITA ////////////////////// 
 #define LED_TYPE    WS2812B
 #define COLOR_ORDER GRB
 #define BRIGHTNESS  128
@@ -314,10 +314,19 @@ void loop() {
   // led strip
 
 
-    int ledMeter = map (teste,0, 255, 0, NUM_LEDS);
+    int ledMeter = map (octoValue,0, 255, 4, NUM_LEDS-4);
 
     
-    LEDstrip[1][ledMeter] = CRGB::Red;
+    LEDstrip[1][ledMeter] = CRGB::Purple;
+    LEDstrip[1][ledMeter-1] = CRGB::Purple;
+    LEDstrip[1][ledMeter-2] = CRGB::Purple;
+    LEDstrip[1][ledMeter-3] = CRGB::Purple;
+    LEDstrip[1][ledMeter+1] = CRGB::Purple;
+    LEDstrip[1][ledMeter+2] = CRGB::Purple;
+    LEDstrip[1][ledMeter+3] = CRGB::Purple;
+
+
+    
     FastLED.show();
     fadeToBlackBy( LEDstrip[1], NUM_LEDS, 40);
     delay(10);
