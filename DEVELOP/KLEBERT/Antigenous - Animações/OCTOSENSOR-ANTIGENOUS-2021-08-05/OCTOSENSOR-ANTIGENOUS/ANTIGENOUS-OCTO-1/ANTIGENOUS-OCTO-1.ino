@@ -60,8 +60,8 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 // ************************************************************
 // REPLACE WITH THE MAC Address of your receiver 
-//uint8_t broadcastAddress[] = {0xC4, 0x4F, 0x33, 0x3E, 0xE7, 0x6D};
-uint8_t broadcastAddress[] = {0x24, 0x62, 0xAB, 0xDD, 0x36, 0x78};
+uint8_t broadcastAddress[] = {0xC4, 0x4F, 0x33, 0x3E, 0xE7, 0x6D};
+//uint8_t broadcastAddress[] = {0x24, 0x62, 0xAB, 0xDD, 0x36, 0x78};
 // ************************************************************
 
 // Define variables to be sent
@@ -118,6 +118,7 @@ unsigned long int respira = 0; //Contador de Millis Universal
 int r = 0; //Acendedor de Lampadas
 int e = NUM_LEDS - 1; //Apagador de Lampadas
 int Velocidade = 0; //Define modo
+int estado = 0; //Define modo
 // Estado == 0 - Idel
 // Estado == 1 - Relaxamento
 // Estado == 2 - Descarga

@@ -118,6 +118,7 @@ unsigned long int respira = 0; //Contador de Millis Universal
 int r = 0; //Acendedor de Lampadas
 int e = NUM_LEDS - 1; //Apagador de Lampadas
 int Velocidade = 0; //Define modo
+int estado = 0;
 // Estado == 0 - Idel
 // Estado == 1 - Relaxamento
 // Estado == 2 - Descarga

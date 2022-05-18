@@ -334,7 +334,7 @@ void loop() {
 
             //sensor 1
       
-      OSCMessage msg1("/sensor/1");
+      OSCMessage msg1("/sensor1");
       msg1.add(octoSensor[0]);
       
       SLIPSerial.beginPacket();  
@@ -346,7 +346,7 @@ void loop() {
 
             //sensor 2
       
-      OSCMessage msg2("/sensor/2");
+      OSCMessage msg2("/sensor2");
       msg2.add(octoSensor[1]);
       
       SLIPSerial.beginPacket();  
@@ -358,7 +358,7 @@ void loop() {
 
             //sensor 3
       
-      OSCMessage msg3("/sensor/3");
+      OSCMessage msg3("/sensor3");
       msg3.add(octoSensor[2]);
       
       SLIPSerial.beginPacket();  
@@ -370,7 +370,7 @@ void loop() {
 
             //sensor 4
       
-      OSCMessage msg4("/sensor/4");
+      OSCMessage msg4("/sensor4");
       msg4.add(octoSensor[3]);
       
       SLIPSerial.beginPacket();  
@@ -382,7 +382,7 @@ void loop() {
 
             //sensor 5
       
-      OSCMessage msg5("/sensor/5");
+      OSCMessage msg5("/sensor5");
       msg5.add(octoSensor[4]);
       
       SLIPSerial.beginPacket();  
@@ -394,7 +394,7 @@ void loop() {
 
             //sensor 6
       
-      OSCMessage msg6("/sensor/6");
+      OSCMessage msg6("/sensor6");
       msg6.add(octoSensor[5]);
       
       SLIPSerial.beginPacket();  
@@ -406,7 +406,7 @@ void loop() {
       
             //sensor 7
       
-      OSCMessage msg7("/sensor/7");
+      OSCMessage msg7("/sensor7");
       msg7.add(octoSensor[6]);
       
       SLIPSerial.beginPacket();  
@@ -418,7 +418,7 @@ void loop() {
       
             //sensor 8
       
-      OSCMessage msg8("/sensor/8");
+      OSCMessage msg8("/sensor8");
       msg8.add(octoSensor[7]);
       
       SLIPSerial.beginPacket();  
