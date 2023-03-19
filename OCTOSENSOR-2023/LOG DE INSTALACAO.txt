@@ -1,0 +1,21 @@
+COMPUTADOR ACER NITRO 5
+
+18.03.2023
+
+
+Instalado Arduino IDE 2.0.4
+Instalado GitHub
+
+Instalado driver para o USB do ESP32: CP210x_Universal_Windows_Driver
+https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=downloads
+(Port não estava habilitando no Arduino IDE)
+
+
+Hardwares do tester:
+1) OCTOSENSOR #4
+2) Central Protoboard visor OLED
+
+
+Teste upload "ESP32-MAC-ADDRESS-SCANNER" - SENSOR 4
+7C:9E:BD:45:B3:C0
+
