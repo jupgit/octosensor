@@ -18,13 +18,13 @@
 //   Klebert
 //   Mariana Arias
 //   Igor
-//   
+//   Matheus Ponte
 //   
 ///////////////////////////////////////////////////////////
 
 
 // OCTOSENSOR NODE SETUP
-const int nodeNumber = 4;   // defines the Octosensor node number
+const int nodeNumber = 3;   // defines the Octosensor node number
 
 // INTERACTIVE STATE MACHINE SETUP IN cm
 int interact_min = 60;
@@ -304,18 +304,6 @@ updateLEDindicator();
   delay(100);
   
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
