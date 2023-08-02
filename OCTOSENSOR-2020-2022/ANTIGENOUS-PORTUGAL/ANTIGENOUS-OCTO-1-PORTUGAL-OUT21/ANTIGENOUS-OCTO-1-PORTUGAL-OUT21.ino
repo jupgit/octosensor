@@ -276,84 +276,6 @@ digitalWrite(laserPoniterPin, 1);  // turns on LASER POINTER
 }
 
 
-
-// *******************************************************
-//
-//                    L  O   O   P
-//
-// *******************************************************
-
-void loop() {
-  
-  getSensorReadings();
- 
-  // Set values to send
-  OCTOReadings.comm = octoCommand;
-  OCTOReadings.node = octoNode;
-  OCTOReadings.value = octoValue;
-
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &OCTOReadings, sizeof(OCTOReadings));
-   
-  /*
-  if (result == ESP_OK) {
-    Serial.println("Sent with success");
-  }
-  else {
-    Serial.println("Error sending the data");
-  }
-  */
-
-  
-  updateDisplay();
-
-
-  int teste = map(octoValue, 10, 150, 0,255);
-  teste = constrain(teste, 0, 255);
-
-  // LED INDICATOR
-
-  
-  LEDstrip[0][1].setRGB(teste/2, 0, 0); // COR
-  LEDstrip[0][0].setRGB(teste/4, 0,0); // COR
-  LEDstrip[0][2].setRGB(teste/4, 0, 0); // COR
-   FastLED.show();
-
-  
-
-  // led strip
-
-
-    int Velocidade = map (octoValue, 10, 140, 20, 1);
-//////////////////////////////////////////////////////////
-// KLEBERT EDITION
-//////////////////////////////////////////////////////////
-
-   if(octoValue > 300){
-      estado = 0;
-    }
-    if(octoValue < 300){
-    estado = 1;
-    }
-/////////
-//Idel
-////////
-    if(estado == 0){
-      int brilho = random(150, 250);
-      fill_solid(leds, NUM_LEDS, CRGB::Orange);
-      FastLED.show(); 
-    }
-
-////////
-// Interação
-///////
-    if(estado == 1){
-       PacificaTaubate(Velocidade, Velocidade*2, 250, 10);
-       FastLED.show();
-    }
-
-}
-
 void PacificaTaubate(int v1, int v2, int b, int sat) { 
     uint8_t sinBeat = beatsin8(v1, 2, NUM_LEDS -1, 0, 0);
     uint8_t sinBeat2 = beatsin8(v2, 0, NUM_LEDS -1, 0, 124);
@@ -456,6 +378,84 @@ void updateDisplay(){
   Serial.print(incomingReadings.value);
   Serial.println();
 }
+
+// *******************************************************
+//
+//                    L  O   O   P
+//
+// *******************************************************
+
+void loop() {
+  
+  getSensorReadings();
+ 
+  // Set values to send
+  OCTOReadings.comm = octoCommand;
+  OCTOReadings.node = octoNode;
+  OCTOReadings.value = octoValue;
+
+  // Send message via ESP-NOW
+  esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &OCTOReadings, sizeof(OCTOReadings));
+   
+  /*
+  if (result == ESP_OK) {
+    Serial.println("Sent with success");
+  }
+  else {
+    Serial.println("Error sending the data");
+  }
+  */
+
+  
+  updateDisplay();
+
+
+  int teste = map(octoValue, 10, 150, 0,255);
+  teste = constrain(teste, 0, 255);
+
+  // LED INDICATOR
+
+  
+  LEDstrip[0][1].setRGB(teste/2, 0, 0); // COR
+  LEDstrip[0][0].setRGB(teste/4, 0,0); // COR
+  LEDstrip[0][2].setRGB(teste/4, 0, 0); // COR
+   FastLED.show();
+
+  
+
+  // led strip
+
+
+    int Velocidade = map (octoValue, 10, 140, 20, 1);
+//////////////////////////////////////////////////////////
+// KLEBERT EDITION
+//////////////////////////////////////////////////////////
+
+   if(octoValue > 300){
+      estado = 0;
+    }
+    if(octoValue < 300){
+    estado = 1;
+    }
+/////////
+//Idel
+////////
+    if(estado == 0){
+      int brilho = random(150, 250);
+      fill_solid(leds, NUM_LEDS, CRGB::Orange);
+      FastLED.show(); 
+    }
+
+////////
+// Interação
+///////
+    if(estado == 1){
+       PacificaTaubate(Velocidade, Velocidade*2, 250, 10);
+       FastLED.show();
+    }
+
+}
+
 
 
 

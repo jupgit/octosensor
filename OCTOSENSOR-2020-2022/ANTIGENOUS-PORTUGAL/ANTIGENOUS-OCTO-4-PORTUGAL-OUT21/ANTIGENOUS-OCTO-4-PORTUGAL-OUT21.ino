@@ -60,9 +60,9 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 // ************************************************************
 // REPLACE WITH THE MAC Address of your receiver 
-//uint8_t broadcastAddress[] = {0xC4, 0x4F, 0x33, 0x3E, 0xE7, 0x6D};
+uint8_t broadcastAddress[] = {0xC4, 0x4F, 0x33, 0x3E, 0xE7, 0x6D};
 //uint8_t broadcastAddress[] = {0x24, 0x62, 0xAB, 0xDD, 0x36, 0x78};
-uint8_t broadcastAddress[] = {0x84, 0xCC, 0xA8, 0x7A, 0x72, 0x24}; // central MKII Portugal
+//uint8_t broadcastAddress[] = {0x84, 0xCC, 0xA8, 0x7A, 0x72, 0x24}; // central MKII Portugal
 // ************************************************************
 
 // Define variables to be sent

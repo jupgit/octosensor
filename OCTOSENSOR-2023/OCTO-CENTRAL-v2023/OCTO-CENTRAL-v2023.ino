@@ -94,8 +94,8 @@ esp_now_peer_info_t peerInfo;
 
 // Callback when data is sent
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-  Serial.print("\r\nLast Packet Send Status:\t");
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  //Serial.print("\r\nLast Packet Send Status:\t");
+  //Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
   if (status ==0){
     success = "TX OK";
   }
@@ -113,8 +113,8 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 // Callback when data is received
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   memcpy(&incomingReadings, incomingData, sizeof(incomingReadings));
-  Serial.print("Bytes received: ");
-  Serial.println(len);
+  //Serial.print("Bytes received: ");
+  //Serial.println(len);
   incomingCommand = incomingReadings.comm;
   incomingNode = incomingReadings.node;
   incomingValue = incomingReadings.value;
@@ -144,7 +144,7 @@ void setup() {
 
   // Init OLED display
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { 
-    Serial.println(F("SSD1306 allocation failed"));
+    //Serial.println(F("SSD1306 allocation failed"));
     for(;;);
   }
  
@@ -153,7 +153,7 @@ void setup() {
 
   // Init ESP-NOW
   if (esp_now_init() != ESP_OK) {
-    Serial.println("Error initializing ESP-NOW");
+    //Serial.println("Error initializing ESP-NOW");
     return;
   }
 
@@ -168,7 +168,7 @@ void setup() {
   
   // Add peer        
   if (esp_now_add_peer(&peerInfo) != ESP_OK){
-    Serial.println("Failed to add peer");
+    //Serial.println("Failed to add peer");
     return;
   }
   // Register for a callback function that will be called when data is received
@@ -203,13 +203,13 @@ void loop() {
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) & OCTOReadings, sizeof(OCTOReadings));
    
   if (result == ESP_OK) {
-    Serial.println("Sent with success");
+    //Serial.println("Sent with success");
   }
   else {
-    Serial.println("Error sending the data");
+    //Serial.println("Error sending the data");
   }
   
-  
+  isadoraOutput();
   
   updateDisplay();
 
@@ -236,6 +236,57 @@ void getReadings(){
   octoValue = int(millis()/1000);
   octoValue = random(200,1000);
 }
+
+
+void isadoraOutput() {
+
+  //ISADORA  
+      
+      for (int i=0; i<8; i++) {
+        Serial.print(i+1,DEC); // Canal 1 do Isadora
+        Serial.print(octoSensor[i]); // Envia sensor 1   
+        Serial.println(); //Send a value to eom
+
+      }
+      
+      /*
+      Serial.print(1,DEC); // Canal 1 do Isadora
+      Serial.print(octoSensor[0]); // Envia sensor 1   
+      Serial.println(); //Send a value to eom
+
+      Serial.print(2,DEC); // Canal 2 do Isadora
+      Serial.print(octoSensor[1]); // Envia sensor 2
+      Serial.println(); //Send a value to eom
+      
+      Serial.print(3,DEC); // Canal 2 do Isadora
+      Serial.print(octoSensor[2]); // Envia sensor 2     
+      Serial.println(); //Send a value to eom
+
+      
+      Serial.print(4,DEC); // Canal 2 do Isadora
+      Serial.print(octoSensor[3]); // Envia sensor 2
+      Serial.println(); //Send a value to eom
+      
+      Serial.print(5,DEC); // Canal 2 do Isadora
+      Serial.print(octoSensor[4]); // Envia sensor 2
+      Serial.println(); //Send a value to eom
+      
+      Serial.print(6,DEC); // Canal 2 do Isadora
+      Serial.print(octoSensor[5]); // Envia sensor 2
+      Serial.println(); //Send a value to eom
+      
+      Serial.print(7,DEC); // Canal 2 do Isadora
+      Serial.print(octoSensor[6]); // Envia sensor 2
+      Serial.println(); //Send a value to eom
+      
+      Serial.print(8,DEC); // Canal 2 do Isadora
+      Serial.print(octoSensor[7]); // Envia sensor 2
+      Serial.println(); //Send a value to eom
+*/
+
+
+}
+
 
 
 

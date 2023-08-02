@@ -155,7 +155,25 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
 //CRGB leds[NUM_LEDS];
 CRGB LEDstrip[NUM_STRIPS][NUM_LEDS];
 
+// KLEBERT EDITION
+bool gReverseDirection = false;
+unsigned long int respira = 0; //Contador de Millis Universal
+int r = 0; //Acendedor de Lampadas
+int e = NUM_LEDS - 1; //Apagador de Lampadas
+int Velocidade = 0; //Define modo
+int estado = 0;
+// Estado == 0 - Idel
+// Estado == 1 - Relaxamento
+// Estado == 2 - Descarga
+// Estado == 3 - Saturação
+// Estado == 4 - Tensão
+CRGB leds[NUM_LEDS];
 
+CRGBPalette16 currentPalette;
+TBlendType    currentBlending;
+
+#define COOLING  55
+#define SPARKING 120
 
 
 
@@ -218,9 +236,14 @@ void setup() {
 
 // LED STRIP  2 // 3 LEDS FOR MONITOR
   //LEDS.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);
-  FastLED.addLeds<NEOPIXEL, 25>(LEDstrip[0], 3); 
+  FastLED.addLeds<NEOPIXEL, 25>(LEDstrip[0], 3);
+  FastLED.addLeds<NEOPIXEL, 26>(LEDstrip[1], NUM_LEDS);
+  FastLED.addLeds<LED_TYPE, 26, GRB>(leds, NUM_LEDS); //// KLEBERT!!!! 
 
-
+  FastLED.setBrightness(BRIGHTNESS);
+    
+  currentPalette = RainbowColors_p;
+  currentBlending = LINEARBLEND;
 
 // BUZZER
   cute.init(BUZZER_PIN);
@@ -301,9 +324,65 @@ if (lastStatusMachine != statusMachine) {
 updateLEDindicator();
 
 
+// KLEBERT
+
+    int Velocidade = map (octoValue, 10, 140, 60, 1);  /// COLOCAR EM VARIAVEL
+
+
+  
+  if (statusMachine == "IDLE") {
+      int brilho = random(150, 250);
+      fill_solid(leds, NUM_LEDS, CRGB::Pink);
+      FastLED.show();
+  }
+
+  if (statusMachine == "INTERACT") {
+         if(estado == 1){
+  PacificaTaubate(Velocidade, Velocidade*2, 250, 10);
+  FastLED.show();
+  }
+
+  if (statusMachine == "SHOT") {
+       
+  }
+
+
+
+
+
   delay(100);
   
 }
+
+
+
+
+/// ****** F U N C T I O N S ******
+
+//// KLEBERT
+
+}
+void PacificaTaubate(int v1, int v2, int b, int sat) { 
+uint8_t sinBeat = beatsin8(v1, 2, NUM_LEDS -1, 0, 0);
+uint8_t sinBeat2 = beatsin8(v2, 0, NUM_LEDS -1, 0, 124);
+uint8_t sinBeat3 = beatsin8(v1, 0, NUM_LEDS -1, 0, 124);
+uint8_t sinBeat4= beatsin8(v2, 0, NUM_LEDS -1, 0, 0);
+
+
+FastLED.setBrightness(b);
+
+leds[sinBeat] = CRGB::Black;
+leds[sinBeat2] = CRGB::Black;
+leds[sinBeat3] = CRGB::Magenta;
+leds[sinBeat4] = CRGB::DeepPink;
+
+
+blur1d(leds, NUM_LEDS, sat);
+fadeToBlackBy(leds, NUM_LEDS, 0);
+
+}
+
+
 
 
 
@@ -396,6 +475,12 @@ void updateLEDindicator() {
   LEDstrip[0][1].setRGB(LEDmonitor*R_index, LEDmonitor*G_index, LEDmonitor*B_index); // COR LED DO MEIO
   LEDstrip[0][0].setRGB(LEDmonitor*R_index, LEDmonitor*G_index, LEDmonitor*B_index); // COR LED DO LADO
   LEDstrip[0][2].setRGB(LEDmonitor*R_index, LEDmonitor*G_index, LEDmonitor*B_index); // COR LEDO DO LADO
+  
+  //LEDstrip[1][1].setRGB(LEDmonitor*R_index, LEDmonitor*G_index, LEDmonitor*B_index); // COR LED DO MEIO
+  //LEDstrip[1][0].setRGB(LEDmonitor*R_index, LEDmonitor*G_index, LEDmonitor*B_index); // COR LED DO LADO
+  //LEDstrip[1][2].setRGB(LEDmonitor*R_index, LEDmonitor*G_index, LEDmonitor*B_index); // COR LEDO DO LADO
+  
+  
   FastLED.show();
 
 }

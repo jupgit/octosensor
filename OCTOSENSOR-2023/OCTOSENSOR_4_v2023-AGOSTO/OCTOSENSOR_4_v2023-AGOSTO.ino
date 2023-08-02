@@ -7,7 +7,7 @@
 //
 //  Project by Juliano Prado (2021) - Brazil
 // 
-//  Revision: 03.2023
+//  Revision: 08.2023
 //
 //  https://github.com/jupgit/octo-sensor
 //
@@ -40,6 +40,19 @@ String lastStatusMachine = statusMachine;  // memory of last state
 int R_index = 1;
 int G_index = 1;
 int B_index = 1;
+
+// ANIMATION FUNCTIONS VARIABLES
+
+int last_ledX = 0;
+
+//strobe variables
+unsigned long strobe_millis_counter = millis();
+unsigned long strobe_millis_counter_old = millis();
+
+// fire variables
+bool gReverseDirection = false;
+
+/////////////////
 
 // SOUND ON/OFF
 bool soundOn = true;
@@ -181,8 +194,6 @@ void setup() {
     for(;;);
   }
  
-
-
  ////////////////////////////////////////////////////////////
  // ESPNOW COMMUNICATION SETUP
  ////////////////////////////////////////////////////////////
@@ -214,7 +225,8 @@ void setup() {
   esp_now_register_recv_cb(OnDataRecv);
 
 ////////////////////////////////////////////////////////////
-
+// FASTLED SETUP
+ ////////////////////////////////////////////////////////////
 
 // LED STRIP  2 // 3 LEDS FOR MONITOR
   //LEDS.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);

@@ -250,7 +250,7 @@ void setup() {
 // LED STRIPs
   //LEDS.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);
   FastLED.addLeds<NEOPIXEL, 25>(LEDstrip[0], 3);  // 3 LEDS FOR MONITOR
-  //FastLED.addLeds<NEOPIXEL, 26>(LEDstrip[1], NUM_LEDS);
+  FastLED.addLeds<NEOPIXEL, 26>(LEDstrip[1], NUM_LEDS);
   FastLED.addLeds<LED_TYPE, 26, GRB>(leds, NUM_LEDS); //// KLEBERT!!!!
 
 
@@ -357,6 +357,8 @@ PacificaTaubate(Velocidade, Velocidade*2, 250, 10);
 
 
 }
+
+
 }
 void PacificaTaubate(int v1, int v2, int b, int sat) { 
 uint8_t sinBeat = beatsin8(v1, 2, NUM_LEDS -1, 0, 0);
