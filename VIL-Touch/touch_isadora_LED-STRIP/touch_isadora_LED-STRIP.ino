@@ -16,10 +16,6 @@ CRGB leds[NUM_LEDS];
 
 int last_ledX = 0;
 
-//strobe variables
-unsigned long strobe_millis_counter = millis();
-unsigned long strobe_millis_counter_old = millis();
-
 // fire variables
 bool gReverseDirection = false;
 
@@ -31,6 +27,28 @@ void setup()
   Serial.println("ESP32 Touch Test");
   pinMode(26, OUTPUT);
   digitalWrite(26, LOW);
+
+
+  
+  // FASTLED
+  FastLED.addLeds<WS2811, DATA_PIN, GRB>(leds, NUM_LEDS).setTemperature(OvercastSky);  // GRB ordering is typical  /// WS2812B
+  FastLED.setBrightness(255);
+  
+  fill_solid(leds, NUM_LEDS, CRGB(255,0,0));
+  FastLED.show();
+  delay(50); 
+  fill_solid(leds, NUM_LEDS, CRGB(0,255,0));
+  FastLED.show();
+  delay(50);
+  fill_solid(leds, NUM_LEDS, CRGB(0,0,255));
+  FastLED.show();
+  delay(50);
+  fill_solid(leds, NUM_LEDS, CRGB(0,0,0));
+  FastLED.show();
+
+  delay(50);
+
+
 }
 
 void loop()
@@ -56,17 +74,17 @@ void loop()
     leitura6 = 0;
 
 
-
-
 if (leitura4 || leitura5 || leitura6) {
 
-// ANIMATION PACIFICA: ani_pacifica(bg_color)
-  int sensor_to_color = map(potValue, 0, 1023, 0, 128);
-  pacifica_loop(CRGB(128-sensor_to_color,0,sensor_to_color));    // CRGB(2,6,10) > original Pacifica color
+    interactive_fire(30, 40);
+  
+  } else {
 
-} else {
+  // ANIMATION PACIFICA: ani_pacifica(bg_color)
+  pacifica_loop(CRGB(2,6,10));    // CRGB(2,6,10) > original Pacifica color
 
-
+// FILL WITH A SOLID COLOR
+//  fill_solid(leds, NUM_LEDS, CRGB(24, 0, 0));
 
 }
 
@@ -84,7 +102,10 @@ if (leitura4 || leitura5 || leitura6) {
   Serial.print(leitura6); // Envia sensor 2
   Serial.println(); //Send a value to eom
 
-  delay(100);
+  delay(25);
+
+  FastLED.show();
+
 
 }
 
@@ -196,4 +217,49 @@ void pacifica_deepen_colors()
     leds[i].green= scale8( leds[i].green, 200); 
     leds[i] |= CRGB( 2, 5, 7);
   }
+}
+
+
+
+void interactive_fire(int fire_cooling, int fire_sparking)
+{
+// Array of temperature readings at each simulation cell
+  static uint8_t heat[NUM_LEDS];
+
+  // Step 1.  Cool down every cell a little
+    for( int i = 0; i < NUM_LEDS; i++) {
+      heat[i] = qsub8( heat[i],  random8(0, ((fire_cooling * 10) / NUM_LEDS) + 2));
+    }
+  
+    // Step 2.  Heat from each cell drifts 'up' and diffuses a little
+    for( int k= NUM_LEDS - 1; k >= 2; k--) {
+      heat[k] = (heat[k - 1] + heat[k - 2] + heat[k - 2] ) / 3;
+    }
+    
+    // Step 3.  Randomly ignite new 'sparks' of heat near the bottom
+    if( random8() < fire_sparking ) {
+      int y = random8(7);
+      heat[y] = qadd8( heat[y], random8(160,255) );
+    }
+
+    // Step 4.  Map from heat cells to LED colors
+    for( int j = 0; j < NUM_LEDS; j++) {
+      CRGB color = HeatColor( heat[j]);
+      int pixelnumber;
+      if( gReverseDirection ) {
+        pixelnumber = (NUM_LEDS-1) - j;
+      } else {
+        pixelnumber = j;
+      }
+      leds[pixelnumber] = color;
+    }
+
+// COOLING: How much does the air cool as it rises?
+// Less cooling = taller flames.  More cooling = shorter flames.
+// Default 50, suggested range 20-100 
+
+// SPARKING: What chance (out of 255) is there that a new spark will be lit?
+// Higher chance = more roaring fire.  Lower chance = more flickery fire.
+// Default 120, suggested range 50-200.
+
 }
