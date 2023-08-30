@@ -88,7 +88,7 @@ if (leitura4 || leitura5 || leitura6) {
 
 }
 
-
+/*
   //ISADORA  
   Serial.print(1,DEC); // Canal 1 do Isadora
   Serial.print(leitura4); // Envia sensor 1
@@ -103,6 +103,8 @@ if (leitura4 || leitura5 || leitura6) {
   Serial.println(); //Send a value to eom
 
   delay(25);
+*/
+
 
   FastLED.show();
 
