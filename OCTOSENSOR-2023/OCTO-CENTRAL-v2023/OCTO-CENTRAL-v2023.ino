@@ -31,9 +31,6 @@
 int octoSensor[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 int previousOctoSensor[8] = {1023, 1023, 1023, 1023, 1023, 1023, 1023, 1023};
 
-
-
-
 #include <esp_now.h>
 #include <WiFi.h>
 
