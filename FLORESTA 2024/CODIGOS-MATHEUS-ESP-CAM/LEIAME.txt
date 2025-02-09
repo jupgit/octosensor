@@ -1,0 +1,11 @@
+Os pinos de conexão obrigatória entre o módulo e a câmera:
+5V (alimentação)
+GND (alimentação - entre IO0 e VCC)
+GND/R (apenas na hora da compilação e gravação do código)
+U0R (apenas na hora da compilação e gravação do código
+U0T 
+IO0 (apenas na hora da compilação e gravação do código)
+VCC (apenas na hora da compilação e gravação do código)
+
+E o pino que vai para o relê:
+IO12
