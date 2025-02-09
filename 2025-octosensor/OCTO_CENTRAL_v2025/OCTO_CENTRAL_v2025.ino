@@ -24,6 +24,13 @@
 
 /// 
 ///     C E N T R A L 
+///
+
+// ARRAY WITH 8 SENSORS READINGS
+
+int octoSensor[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+int previousOctoSensor[8] = {1023, 1023, 1023, 1023, 1023, 1023, 1023, 1023};
+
 #include <esp_now.h>
 #include <WiFi.h>
 
@@ -31,12 +38,6 @@
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-
-// ARRAY WITH 8 SENSORS READINGS
-
-int octoSensor[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-int previousOctoSensor[8] = {1023, 1023, 1023, 1023, 1023, 1023, 1023, 1023};
-
 
 #define SCREEN_WIDTH 128  // OLED display width, in pixels
 #define SCREEN_HEIGHT 64  // OLED display height, in pixels
@@ -89,9 +90,6 @@ esp_now_peer_info_t peerInfo;
 
 
 // Callback when data is sent
-
-
-
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   //Serial.print("\r\nLast Packet Send Status:\t");
   //Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
@@ -110,9 +108,7 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 //   R  R    X   X
 
 // Callback when data is received
-
-
-void OnDataRecv(const uint8_t *mac_addr, const uint8_t *incomingData, int len) {
+void OnDataRecv(const esp_now_recv_info_t *recv_info, const uint8_t *incomingData, int len) {
   memcpy(&incomingReadings, incomingData, sizeof(incomingReadings));
   //Serial.print("Bytes received: ");
   //Serial.println(len);

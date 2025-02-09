@@ -24,6 +24,18 @@
 
 /// 
 ///     C E N T R A L 
+///
+
+#include <FastLED.h>
+
+// ARRAY WITH 8 SENSORS READINGS
+
+int octoSensor[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+int previousOctoSensor[8] = {1023, 1023, 1023, 1023, 1023, 1023, 1023, 1023};
+
+int dist_min = 1;
+int dist_max = 400;
+
 #include <esp_now.h>
 #include <WiFi.h>
 
@@ -31,12 +43,6 @@
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-
-// ARRAY WITH 8 SENSORS READINGS
-
-int octoSensor[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-int previousOctoSensor[8] = {1023, 1023, 1023, 1023, 1023, 1023, 1023, 1023};
-
 
 #define SCREEN_WIDTH 128  // OLED display width, in pixels
 #define SCREEN_HEIGHT 64  // OLED display height, in pixels
@@ -49,7 +55,6 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 uint8_t broadcastAddress[] = {0xC4, 0x4F, 0x33, 0x3E, 0xE7, 0x6D}; 
 
 // CENTRAL PROTOBOARD OLED
-
 
 // Define variables to store readings to be sent
 int octoCommand;
@@ -89,9 +94,6 @@ esp_now_peer_info_t peerInfo;
 
 
 // Callback when data is sent
-
-
-
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   //Serial.print("\r\nLast Packet Send Status:\t");
   //Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
@@ -110,9 +112,7 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 //   R  R    X   X
 
 // Callback when data is received
-
-
-void OnDataRecv(const uint8_t *mac_addr, const uint8_t *incomingData, int len) {
+void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   memcpy(&incomingReadings, incomingData, sizeof(incomingReadings));
   //Serial.print("Bytes received: ");
   //Serial.println(len);
@@ -129,7 +129,17 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *incomingData, int len) {
 }
 
 
+// LED STRIP ///////////////////////////////
 
+
+#define LED_TYPE    WS2811  //WS2812B
+#define COLOR_ORDER GRB
+#define MAX_BRIGHTNESS  128
+
+// Panel LEDs (only 8)
+#define PANEL_LED_PIN     25
+#define PANEL_NUM_LEDS    8
+CRGB panel_leds[PANEL_NUM_LEDS];
 
  
 // *******************************************************
@@ -174,6 +184,28 @@ void setup() {
   }
   // Register for a callback function that will be called when data is received
   esp_now_register_recv_cb(OnDataRecv);
+
+
+ ////////////////////////////////////////////////////////////
+ // FASTLED SETUP
+ ////////////////////////////////////////////////////////////
+
+// Panel LEDs
+  FastLED.addLeds<LED_TYPE, PANEL_LED_PIN, COLOR_ORDER>(panel_leds, PANEL_NUM_LEDS);
+// Panel LED Test
+  fill_solid(panel_leds, PANEL_NUM_LEDS, CRGB(255,0,0)); /// RED
+    FastLED.show();
+    delay(500); 
+  fill_solid(panel_leds, PANEL_NUM_LEDS, CRGB(0,255,0));  /// GREEN
+    FastLED.show();
+    delay(500);
+  fill_solid(panel_leds, PANEL_NUM_LEDS, CRGB(0,0,255));  /// BLUE
+  FastLED.show();
+    delay(500);
+  fill_solid(panel_leds, PANEL_NUM_LEDS, CRGB(0,0,0));    /// BLACK
+    FastLED.show();
+
+
 }
  
 
@@ -214,13 +246,10 @@ void loop() {
   
   updateDisplay();
 
-
+  updatePanelLEDs();
 
   delay(25);
 }
-
-
-
 
 
 ////
@@ -229,69 +258,65 @@ void loop() {
 ////
 ////
 
-
-
-void getReadings(){
+void getReadings() {
   octoCommand = 1;
-  octoNode = 4;
+  octoNode = 9;
   octoValue = int(millis()/1000);
-  octoValue = random(200,1000);
+  //octoValue = random(200,1000);
 }
-
 
 void isadoraOutput() {
 
   //ISADORA  
       
+      /*
       for (int i=0; i<8; i++) {
         Serial.print(i+1,DEC); // Canal 1 do Isadora
         Serial.print(octoSensor[i]); // Envia sensor 1   
         Serial.println(); //Send a value to eom
 
       }
+      */
       
-      /*
-      Serial.print(1,DEC); // Canal 1 do Isadora
+      Serial.print(5,DEC); // Canal 1 do Isadora
       Serial.print(octoSensor[0]); // Envia sensor 1   
       Serial.println(); //Send a value to eom
 
-      Serial.print(2,DEC); // Canal 2 do Isadora
+      Serial.print(7,DEC); // Canal 2 do Isadora
       Serial.print(octoSensor[1]); // Envia sensor 2
       Serial.println(); //Send a value to eom
       
-      Serial.print(3,DEC); // Canal 2 do Isadora
+      Serial.print(3,DEC); // Canal 3 do Isadora
       Serial.print(octoSensor[2]); // Envia sensor 2     
       Serial.println(); //Send a value to eom
 
       
-      Serial.print(4,DEC); // Canal 2 do Isadora
+      Serial.print(6,DEC); // Canal 3 do Isadora
       Serial.print(octoSensor[3]); // Envia sensor 2
       Serial.println(); //Send a value to eom
       
-      Serial.print(5,DEC); // Canal 2 do Isadora
+      Serial.print(1,DEC); // Canal 4 do Isadora
       Serial.print(octoSensor[4]); // Envia sensor 2
       Serial.println(); //Send a value to eom
       
-      Serial.print(6,DEC); // Canal 2 do Isadora
+      Serial.print(4,DEC); // Canal 5 do Isadora
       Serial.print(octoSensor[5]); // Envia sensor 2
       Serial.println(); //Send a value to eom
       
-      Serial.print(7,DEC); // Canal 2 do Isadora
+      Serial.print(2,DEC); // Canal 6 do Isadora
       Serial.print(octoSensor[6]); // Envia sensor 2
       Serial.println(); //Send a value to eom
       
-      Serial.print(8,DEC); // Canal 2 do Isadora
+      Serial.print(8,DEC); // Canal 7 do Isadora
       Serial.print(octoSensor[7]); // Envia sensor 2
       Serial.println(); //Send a value to eom
-*/
+
 
 
 }
 
+void updateDisplay() {
 
-
-
-void updateDisplay(){
   // Display Readings on OLED Display
   display.clearDisplay();
   display.setTextSize(1);
@@ -336,5 +361,22 @@ void updateDisplay(){
 
   display.display();
   
+
+}
+
+void updatePanelLEDs() {
+
+// MONITOR (INDICATOR) LED STRIPS
+
+  for (int s=0; s<=7; s++) { 
+
+    int LEDmonitor = map(octoSensor[s], dist_min, dist_max, 3,255);
+    LEDmonitor = constrain(LEDmonitor, 3, 255);
+  
+    panel_leds[s].setRGB(LEDmonitor, 0, 0); // sets color for each panel LED
+
+  }
+
+  FastLED.show();
 
 }

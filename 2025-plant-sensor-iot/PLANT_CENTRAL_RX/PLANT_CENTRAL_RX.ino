@@ -1,29 +1,19 @@
 ///////////////////////////////////////////////////////////
 //
-//  O C T O  S E N S O R   
-//  A wireless system with 8 laser range finder modules
-//  and a central unit to be used in interactive 
-//  art installations.
-//
-//  Project by Juliano Prado (2021) - Brazil
-// 
-//  Revision: 03.2023
-//
-//  https://github.com/jupgit/octo-sensor
-//
-//  TF LUNA I2C VERSION
-//
-//  Colaborators:
-//   Paulo Cesar Teles (PhD)
-//   Klebert
-//   Mariana Arias
-//   Igor
+
 //   
 //   
 ///////////////////////////////////////////////////////////
 
 /// 
 ///     C E N T R A L 
+///
+
+// ARRAY WITH 8 SENSORS READINGS
+
+//int octoSensor[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+//int previousOctoSensor[8] = {1023, 1023, 1023, 1023, 1023, 1023, 1023, 1023};
+
 #include <esp_now.h>
 #include <WiFi.h>
 
@@ -31,12 +21,6 @@
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-
-// ARRAY WITH 8 SENSORS READINGS
-
-int octoSensor[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-int previousOctoSensor[8] = {1023, 1023, 1023, 1023, 1023, 1023, 1023, 1023};
-
 
 #define SCREEN_WIDTH 128  // OLED display width, in pixels
 #define SCREEN_HEIGHT 64  // OLED display height, in pixels
@@ -46,34 +30,37 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 // REPLACE WITH THE MAC Address of your receiver 
 //uint8_t broadcastAddress[] = {0x7C, 0x9E, 0xBD, 0x45, 0xB3, 0xC0}; // OCTOSENSOR #4
-uint8_t broadcastAddress[] = {0xC4, 0x4F, 0x33, 0x3E, 0xE7, 0x6D}; 
+uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; 
 
-// CENTRAL PROTOBOARD OLED
 
 
 // Define variables to store readings to be sent
-int octoCommand;
-int octoNode;
-int octoValue;
+//int octoCommand;
+//int octoNode;
+//int octoValue;
 
 // Define variables to store incoming readings
-int incomingCommand;
-int incomingNode;
-int incomingValue;
+float incoming_plantTemp;
+float incoming_plantUmid;
+int incoming_plantMoisture1;
 
 // Variable to store if sending data was successful
 String success;
 
+
 //Structure example to send data
 //Must match the receiver structure
+
 typedef struct struct_message {
-    int comm;
-    int node;
-    int value;
+  float temp;
+  float umid;
+  int moisture1;
 } struct_message;
 
+
 // Create a struct_message called BME280Readings to hold sensor readings
-struct_message OCTOReadings;
+struct_message plantReadings;
+
 
 // Create a struct_message to hold incoming sensor readings
 struct_message incomingReadings;
@@ -89,9 +76,6 @@ esp_now_peer_info_t peerInfo;
 
 
 // Callback when data is sent
-
-
-
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   //Serial.print("\r\nLast Packet Send Status:\t");
   //Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
@@ -103,6 +87,8 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   }
 }
 
+
+
 //   RRRR    X   X
 //   R   R    X X
 //   RRRR      X
@@ -110,20 +96,18 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 //   R  R    X   X
 
 // Callback when data is received
-
-
-void OnDataRecv(const uint8_t *mac_addr, const uint8_t *incomingData, int len) {
+void OnDataRecv(const esp_now_recv_info_t *recv_info, const uint8_t *incomingData, int len) {
   memcpy(&incomingReadings, incomingData, sizeof(incomingReadings));
   //Serial.print("Bytes received: ");
   //Serial.println(len);
-  incomingCommand = incomingReadings.comm;
-  incomingNode = incomingReadings.node;
-  incomingValue = incomingReadings.value;
+  incoming_plantTemp = incomingReadings.temp;
+  incoming_plantUmid = incomingReadings.umid;
+  incoming_plantMoisture1 = incomingReadings.moisture1;
 
 
 //////////////////////////////////////////////////////////////////////////////////////
 // REMOTE SENSOR VALUE into its position in Array 
-   octoSensor[incomingNode-1] = incomingValue;
+//   octoSensor[incomingNode-1] = incomingValue;
 //////////////////////////////////////////////////////////////////////////////////////
  
 }
@@ -192,9 +176,9 @@ void setup() {
 
 void loop() {
   
-  /// TROCAR POR MILLIS
-  getReadings();
+  //getReadings();
  
+ /*
   // Set values to send
   OCTOReadings.comm = octoCommand;
   OCTOReadings.node = octoNode;
@@ -210,11 +194,9 @@ void loop() {
     //Serial.println("Error sending the data");
   }
   
-  isadoraOutput();
-  
+    */
+
   updateDisplay();
-
-
 
   delay(25);
 }
@@ -231,108 +213,19 @@ void loop() {
 
 
 
-void getReadings(){
-  octoCommand = 1;
-  octoNode = 4;
-  octoValue = int(millis()/1000);
-  octoValue = random(200,1000);
-}
-
-
-void isadoraOutput() {
-
-  //ISADORA  
-      
-      for (int i=0; i<8; i++) {
-        Serial.print(i+1,DEC); // Canal 1 do Isadora
-        Serial.print(octoSensor[i]); // Envia sensor 1   
-        Serial.println(); //Send a value to eom
-
-      }
-      
-      /*
-      Serial.print(1,DEC); // Canal 1 do Isadora
-      Serial.print(octoSensor[0]); // Envia sensor 1   
-      Serial.println(); //Send a value to eom
-
-      Serial.print(2,DEC); // Canal 2 do Isadora
-      Serial.print(octoSensor[1]); // Envia sensor 2
-      Serial.println(); //Send a value to eom
-      
-      Serial.print(3,DEC); // Canal 2 do Isadora
-      Serial.print(octoSensor[2]); // Envia sensor 2     
-      Serial.println(); //Send a value to eom
-
-      
-      Serial.print(4,DEC); // Canal 2 do Isadora
-      Serial.print(octoSensor[3]); // Envia sensor 2
-      Serial.println(); //Send a value to eom
-      
-      Serial.print(5,DEC); // Canal 2 do Isadora
-      Serial.print(octoSensor[4]); // Envia sensor 2
-      Serial.println(); //Send a value to eom
-      
-      Serial.print(6,DEC); // Canal 2 do Isadora
-      Serial.print(octoSensor[5]); // Envia sensor 2
-      Serial.println(); //Send a value to eom
-      
-      Serial.print(7,DEC); // Canal 2 do Isadora
-      Serial.print(octoSensor[6]); // Envia sensor 2
-      Serial.println(); //Send a value to eom
-      
-      Serial.print(8,DEC); // Canal 2 do Isadora
-      Serial.print(octoSensor[7]); // Envia sensor 2
-      Serial.println(); //Send a value to eom
-*/
-
-
-}
-
-
-
-
 void updateDisplay(){
   // Display Readings on OLED Display
   display.clearDisplay();
-  display.setTextSize(1);
+  display.setTextSize(2);
   display.setTextColor(WHITE);
-  display.setCursor(0, 0);
-  display.print("OCTOsensor READINGS");
+  display.setCursor(0, 15);
+  //display.print("plantMonitor");
 
-  //1
-  display.setCursor(0, 20);
-  display.print("1: ");
-  display.print(octoSensor[0]);
-  //2
-  display.setCursor(0, 30);
-  display.print("2: ");
-  display.print(octoSensor[1]);
-  //3
-  display.setCursor(0, 40);
-  display.print("3: ");
-  display.print(octoSensor[2]);
-  //4
-  display.setCursor(0, 50);
-  display.print("4: ");
-  display.print(octoSensor[3]);
-  //5
-  display.setCursor(64, 20);
-  display.print("5: ");
-  display.print(octoSensor[4]);
-  //6
-  display.setCursor(64, 30);
-  display.print("6: ");
-  display.print(octoSensor[5]);
-  //7
-  display.setCursor(64, 40);
-  display.print("7: ");
-  display.print(octoSensor[6]);
-  //8
-  display.setCursor(64, 50);
-  display.print("8: ");
-  display.print(octoSensor[7]);
+  //display.setCursor(0, 30);
+  display.print("T: "); display.println(incoming_plantTemp);
+  display.print("U: "); display.println(incoming_plantUmid);
+  display.print("M: "); display.println(incoming_plantMoisture1);
 
-  
 
   display.display();
   
