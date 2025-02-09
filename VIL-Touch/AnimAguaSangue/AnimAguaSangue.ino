@@ -59,9 +59,9 @@ void animAgua() {
   delay(100);
 }
 
-void animSangue() {
+void animSangue(int LED_strip) {
   if (redLength < NUM_LEDS) {
-    ledStrip[2][redLength] = CRGB::Red;
+    ledStrip[LED_strip][redLength] = CRGB::Red;
     FastLED.show();
     redLength++;
     delay(25);
@@ -74,10 +74,10 @@ void animSangue() {
     }
 
     FastLED.clear();
-    fill_solid(ledStrip[2], NUM_LEDS, CRGB::Red);
+    fill_solid(ledStrip[LED_strip], NUM_LEDS, CRGB::Red);
 
     for (int i = 0; i < pointsQty; i++) {
-      ledStrip[2][pointsArr[i] + skip] = CRGB(138, 21, 21);
+      ledStrip[LED_strip][pointsArr[i] + skip] = CRGB(138, 21, 21);
     }
     FastLED.show();
     delay(100);
