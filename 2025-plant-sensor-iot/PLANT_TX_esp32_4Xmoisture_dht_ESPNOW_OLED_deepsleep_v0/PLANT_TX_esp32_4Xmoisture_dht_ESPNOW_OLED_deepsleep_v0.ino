@@ -8,6 +8,11 @@
 // Pin that will switch on/off the sensors
 #define SENSORSONOFF_PIN 2 
 
+// Sample counter
+int sampleCount = 0;
+int currentSensor = 1;
+
+
 // DHT Sensor
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
@@ -25,7 +30,11 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 uint32_t delayMS;
 
 /// moisture sensor
-const int sensorPin = 32;
+const int sensor1Pin = 32;
+const int sensor2Pin = 34;
+const int sensor3Pin = 35;
+const int sensor4Pin = 36;
+
 const int airValue = 3620;
 const int waterValue = 1680;
 int soilMoistureValue = 0;
@@ -60,7 +69,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 #define USE_EXT0_WAKEUP          1               // 1 = EXT0 wakeup, 0 = EXT1 wakeup
 #define WAKEUP_GPIO              GPIO_NUM_33     // RTC IO pin for external wake-up
 
-#define TIME_TO_SLEEP 10  // Time in seconds before ESP32 wakes up from deep sleep
+#define TIME_TO_SLEEP 120  // Time in seconds before ESP32 wakes up from deep sleep
 
 RTC_DATA_ATTR int bootCount = 0;  // Store boot count in RTC memory
 
@@ -89,11 +98,19 @@ uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; // ALL PAIRED
 float plantTemp;
 float plantUmid;
 int plant1Moisture;
+int plant2Moisture;
+int plant3Moisture;
+int plant4Moisture;
+
 
 //Define variables to store incoming readings
 float incomingTemp;
 float incomingUmid;
 int incomingMoisture1;
+int incomingMoisture2;
+int incomingMoisture3;
+int incomingMoisture4;
+
 
 // Variable to store if sending data was successful
 String success;
@@ -104,6 +121,10 @@ typedef struct struct_message {
     float temp;
     float umid;
     int moisture1;
+    int moisture2;
+    int moisture3;
+    int moisture4;
+
 } struct_message;
 
 // Create a struct_message called plantReadings to hold sensor readings
@@ -135,11 +156,12 @@ void OnDataRecv(const esp_now_recv_info_t *recv_info, const uint8_t *incomingDat
   incomingTemp = incomingReadings.temp;
   incomingUmid = incomingReadings.umid;
   incomingMoisture1 = incomingReadings.moisture1;
+  incomingMoisture2 = incomingReadings.moisture2;
+  incomingMoisture3 = incomingReadings.moisture3;
+  incomingMoisture4 = incomingReadings.moisture4;
+
 }
   
-
-
-
 
 
 
@@ -155,12 +177,28 @@ void setup() {
 
 Serial.begin(9600);
 
-// Liga e desliga energia dos sensores
+// Liga e desliga energia dos perifericos (sensores + OLED)
 pinMode(SENSORSONOFF_PIN, OUTPUT);
 digitalWrite(SENSORSONOFF_PIN, HIGH);  // Turn ON SENSORS
 
-Serial.println("Sensores energizados");
+Serial.println("Sensors and OLED POWERED ON");
 delay(2000);
+
+// Init OLED display
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { 
+    //Serial.println(F("SSD1306 allocation failed"));
+    for(;;);
+  }
+
+  // Display Hello
+  display.clearDisplay();
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 16);
+  display.print("Waking up");
+  display.display();
+
+
 
 dht.begin();
   Serial.println(F("DHTxx Unified Sensor Example"));
@@ -194,23 +232,6 @@ dht.begin();
       
   // Set delay between sensor readings based on sensor details.
   delayMS = sensor.min_delay / 1000;
-
-
-
-// Init OLED display
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { 
-    //Serial.println(F("SSD1306 allocation failed"));
-    for(;;);
-  }
-
-
-  // Display Hello
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-  display.setCursor(0, 0);
-  display.print("Hello");
-  display.display();
 
 
  ////////////////////////////////////////////////////////////
@@ -291,6 +312,8 @@ readSensors();
 
 updateDisplay();
 
+delay(6000);
+
 
 // Send message via ESP-NOW
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) & plantReadings, sizeof(plantReadings));
@@ -303,12 +326,15 @@ updateDisplay();
   }
 
 
+// Display Hello
+  display.clearDisplay();
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 16);
+  display.print("Sending...");
+  display.display();
 
-
-
-
-
-  delay(10000);
+  delay(2000);
 
 
 
@@ -319,7 +345,27 @@ updateDisplay();
 
   // Print message and enter deep sleep
   Serial.println("ESP32 going to sleep now...");
-  esp_deep_sleep_start();
+
+ // Display final
+
+  //updateDisplay();
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.print("zzzzzz....");
+    display.display();
+
+  
+  delay(4000);
+
+  display.ssd1306_command(SSD1306_DISPLAYOFF);  // Turns OFF OLED
+
+  // Liga e desliga energia dos perifericos (sensores + OLED)
+  digitalWrite(SENSORSONOFF_PIN, LOW);  // Turn OFF SENSORS
+
+  Serial.println("Sensors and OLED POWERED *OFF*");
+  delay(2000);
+
+  esp_deep_sleep_start(); ////////////// zzzzzzzzzzzzzzzzzzzzzzz
 
   Serial.println("This will never be printed");  // This line will never execute
 
@@ -333,11 +379,7 @@ updateDisplay();
 // L O O P
 //=====================================================================================
 
-
-
-
 void loop() {
-
 
 
 
@@ -347,17 +389,52 @@ void loop() {
 // F U N C T I O N S
 //=====================================================================================
 
-int sampledMoisture() {
-  const int numSamples = 5;
+int sampledMoisture(int SampledSensorPin) {
+  const int numSamples = 4;
   const int delayBetweenSamples = 2000; // in milliseconds
   int total = 0;
 
+/*/ Init OLED display
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { 
+    //Serial.println(F("SSD1306 allocation failed"));
+    for(;;);
+  }
+*/
+  
+
+  // Display Moisture Sample Readings
+  display.fillRect(0, 12, 128, 52, SSD1306_BLACK);
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 16);
+  display.print("Sensor ");
+  display.print(currentSensor);
+  display.print("/4");
+
+  display.setTextSize(1);
+  display.setCursor(0, 34);
+  display.display();
+
   for (int i = 0; i < numSamples; i++) {
-    int sample = analogRead(sensorPin);
+    int sample = analogRead(SampledSensorPin);
     total += sample;
-    delay(delayBetweenSamples);
+
+    //SERIAL
     Serial.print("sample "); Serial.print(i+1);
     Serial.print(" = "); Serial.println(sample);
+
+    // DISPLAY:
+
+    // filling circles
+    int circleX = 4 + sampleCount * 8;   // startX + i * spacing
+    display.fillCircle(circleX, 8, 3, SSD1306_WHITE); // x, yPos, radius
+    display.display();    
+    sampleCount++;
+
+    display.print(sample);display.print(" ");
+    display.display();
+
+    delay(delayBetweenSamples);
 
   }
 
@@ -372,19 +449,35 @@ void readSensors() {
 
 
 //////////////////////////////
-  //    SENSOR READINGS
-  //////////////////////////////
+//    SENSOR READINGS
+//////////////////////////////
 
-  digitalWrite(SENSORSONOFF_PIN, HIGH);  // Turn ON SENSORS
+  //digitalWrite(SENSORSONOFF_PIN, HIGH);  // Turn ON SENSORS
 
-  Serial.println("Sensors *** O N ***");
+  //Serial.println("Sensors *** O N ***");
   delay(2000);
 
 
+  display.clearDisplay();
+  // Draw unfilled circles one at a time
+  for (int i = 0; i < 16; i++) {
+    int x = 4 + i * 8;   // startX + i * spacing
+    display.drawCircle(x, 8, 3, SSD1306_WHITE); // x, yPos, radius
+    display.display();
+    delay(100);
+  }
+
   //soilMoistureValue = analogRead(sensorPin);
-  soilMoistureValue =sampledMoisture();
-  // Set value to send
-  plantReadings.moisture1 = soilMoistureValue;   // <<<< TO BE SENT
+  //soilMoistureValue =sampledMoisture();
+  //plantReadings.moisture1 = soilMoistureValue;   // <<<< TO BE SENT
+    currentSensor = 1;
+    plantReadings.moisture1 = sampledMoisture(sensor1Pin);
+    currentSensor = 2;
+    plantReadings.moisture2 = sampledMoisture(sensor2Pin);
+    currentSensor = 3;
+    plantReadings.moisture3 = sampledMoisture(sensor3Pin);
+    currentSensor = 4;
+    plantReadings.moisture4 = sampledMoisture(sensor4Pin);
 
   /// SENSOR DHT
   sensors_event_t event;
@@ -412,8 +505,8 @@ void readSensors() {
   Serial.print(plantReadings.temp); Serial.print(" , ");
   Serial.println(plantReadings.umid);
  
-  digitalWrite(SENSORSONOFF_PIN, LOW);  // Turn OFF SENSORS
-  Serial.println("Sensors *** O F F ***");
+  //digitalWrite(SENSORSONOFF_PIN, LOW);  // Turn OFF SENSORS
+  //Serial.println("Sensors *** O F F ***");
 
 }
 
@@ -423,12 +516,18 @@ void updateDisplay() {
   display.clearDisplay();
   display.setTextSize(2);
   display.setTextColor(WHITE);
-  display.setCursor(0, 16);
-  //display.print("plantMonitor");
+  display.setCursor(0, 0);
+  display.println("Readings:");
 
-  display.print("T: "); display.println(plantReadings.temp);
-  display.print("U: "); display.println(plantReadings.umid);
-  display.print("M: "); display.println(plantReadings.moisture1);
+  display.setTextSize(1);
+  display.print("Temp: "); display.println(plantReadings.temp);
+  display.print("Umid: "); display.println(plantReadings.umid);
+
+  display.print("1:"); display.println(plantReadings.moisture1);
+  display.print("2:"); display.println(plantReadings.moisture2);
+  display.print("3:"); display.println(plantReadings.moisture3);
+  display.print("4:"); display.println(plantReadings.moisture4);
+
 
   display.display();
 }
@@ -439,15 +538,25 @@ void print_wakeup_reason() {
 
   wakeup_reason = esp_sleep_get_wakeup_cause();
 
+// Display Hello
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 36);
+ 
   switch (wakeup_reason) {
     case ESP_SLEEP_WAKEUP_EXT0:
       Serial.println("Wakeup caused by external signal using RTC_IO");
+      display.print("You wokew me up!");
       break;
     case ESP_SLEEP_WAKEUP_EXT1:
       Serial.println("Wakeup caused by external signal using RTC_CNTL");
+      display.print("You woke me up!");
+
       break;
     case ESP_SLEEP_WAKEUP_TIMER:
       Serial.println("Wakeup caused by timer");
+      display.print("Wakeup by timer");
+
       break;
     case ESP_SLEEP_WAKEUP_TOUCHPAD:
       Serial.println("Wakeup caused by touchpad");
@@ -457,6 +566,11 @@ void print_wakeup_reason() {
       break;
     default:
       Serial.printf("Wakeup was not caused by deep sleep: %d\n", wakeup_reason);
+      display.print("Why, why???");
+
       break;
   }
+
+   display.display();
+   delay(1000);
 }

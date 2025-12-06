@@ -126,11 +126,10 @@ void setup() {
 
 void loop() {
   
-
-
   updateDisplay();
 
   delay(25);
+  
 }
 
 
