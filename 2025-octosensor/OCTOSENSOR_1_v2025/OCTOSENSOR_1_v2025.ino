@@ -168,7 +168,7 @@ CRGB LEDstrip[NUM_STRIPS][NUM_LEDS];
 
 void setup() {
   // Init Serial Monitor
-  Serial.begin(115200); 
+  Serial.begin(9600); 
 
   // SENSOR
   Wire.begin();           // Initalize Wire library
@@ -263,13 +263,18 @@ void loop() {
 
   // Send message via ESP-NOW
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) & OCTOReadings, sizeof(OCTOReadings));
-   
+
+ /*
   if (result == ESP_OK) {
     Serial.println("Sent with success");
   }
   else {
     Serial.println("Error sending the data");
   }
+*/  
+
+// Envia a distancia via serial
+    Serial.println(octoValue);
 
 
   updateDisplay();
