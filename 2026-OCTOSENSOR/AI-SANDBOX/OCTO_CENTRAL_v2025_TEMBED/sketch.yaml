@@ -1,0 +1,20 @@
+# ============================================================
+#  Perfil de build - CENTRAL LilyGO T-Embed (ESP32-S3)
+#  Fixa a placa, as opcoes de Tools e a versao da core (3.x).
+#  Opcoes espelham a config validada no TFT_Rainbow:
+#    PSRAM OPI, Flash 16MB, Huge APP, USB CDC On Boot, etc.
+#
+#  A versao da core abaixo (3.0.7) e um exemplo estavel da 3.x.
+#  Ajuste para a versao 3.x que voce instalou / prefere
+#  (veja em Tools > Board > Boards Manager > esp32).
+# ============================================================
+profiles:
+  tembed:
+    notes: Central OCTOSENSOR - LilyGO T-Embed ESP32-S3
+    fqbn: esp32:esp32:esp32s3:USBMode=hwcdc,CDCOnBoot=cdc,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,CPUFreq=240,FlashMode=qio,FlashSize=16M,PartitionScheme=huge_app,DebugLevel=none,PSRAM=opi,LoopCore=1,EventsCore=1,EraseFlash=none,JTAGAdapter=default,UploadSpeed=921600,ZigbeeMode=default
+    platforms:
+      - platform: esp32:esp32 (3.0.7)
+    libraries:
+      - TFT_eSPI
+
+default_profile: tembed

@@ -1,0 +1,25 @@
+# ============================================================
+#  Perfil de build - MODULO SENSOR (ESP32 comum / Dev Module)
+#  Fixa a placa e a versao da core (3.x).
+#
+#  A versao da core abaixo (3.0.7) e um exemplo estavel da 3.x.
+#  Ajuste para a versao 3.x que voce instalou / prefere
+#  (veja em Tools > Board > Boards Manager > esp32).
+#
+#  Se algum modulo usar particao/PSRAM especifica, acrescente
+#  as opcoes no fqbn (ex.: :PartitionScheme=huge_app,PSRAM=enabled).
+# ============================================================
+profiles:
+  esp32_sensor:
+    notes: Modulo sensor OCTOSENSOR - ESP32 Dev Module
+    fqbn: esp32:esp32:esp32:PartitionScheme=huge_app,CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,DebugLevel=none
+    platforms:
+      - platform: esp32:esp32 (3.0.7)
+    libraries:
+      - FastLED
+      - TFLI2C
+      - Adafruit GFX Library
+      - Adafruit SSD1306
+      - CuteBuzzerSounds
+
+default_profile: esp32_sensor
